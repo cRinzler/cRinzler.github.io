@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Canvas 测试</title>
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+		div:first-child{
+			width:100%;
+		}
+		#paint-area{
+			
+			margin-left:3%;
+			margin-right:3%;
+			margin-top:20px;
+			border: 1px solid gray;
+		}
+
+	</style>
+</head>
+<body>
+	<div>
+		<canvas id="paint-area"  width=2000 height=800 >
+		  您的浏览器暂时不支持canvas，请更换浏览器或更新浏览器到最新版本！
+		</canvas>
+	</div>
+</body>
+<script type="text/javascript">
+		
+var radius=30;
+var width=2000,height=800;
+var preX=1000,preY=height-radius;
+var balls=new Array();
+
+window.onload=function(){
+
+	var cvs=document.getElementById("paint-area");
+	var context=cvs.getContext('2d');
+	createOneBall();
+	setInterval(function(){
+		
+		flashCir(context);
+	},
+	25
+	);
+	setInterval(function(){
+		createOneBall();
+	},
+	500
+	);
+	setInterval(function(){
+		updateCir(context);
+	},
+	50
+	);
+
+	
+}
+
+function flashCir(context){
+	
+	context.clearRect(0,0,width,height);
+	for(var i=0;i<balls.length;i++)
+		paintCir(context,balls[i]);
+}
+
+
+
+function updateCir(context){
+	
+	var count=0;
+	
+
+
+	console.log('----------------:更新step1:----------'+balls.length);
+	for(var i=0;i<balls.length;i++)
+	{
+
+
+		balls[i].x+=balls[i].vx;
+		if(balls[i].y>=height-radius)
+			{
+				balls[i].y=height-radius;
+				balls[i].vy=-0.75*balls[i].vy;
+			}
+			
+		balls[i].y+=balls[i].vy;
+		balls[i].vy+=balls[i].vg;
+
+	}
+
+	for(var i=0;i<balls.length;i++)
+		if(balls[i].x+radius>0&&balls[i].x-radius<width)
+			balls[count++]=balls[i];
+	while(balls.length>count)
+		balls.pop();
+}
+
+function createOneBall(){
+	var ball={x:preX,y:preY,vx:Math.floor(Math.random()*5+1)*(Math.floor(Math.random()>0.5)?1:-1),vy:-Math.floor(Math.random()*100+40),vg:5,color:getAColor()};
+	//console.log(ball.x+"---"+ball.y+"---"+ball.color);
+	balls.push(ball);
+}
+
+function paintCir(context,ball){
+
+	context.beginPath();
+	context.fillStyle=ball.color;
+	context.arc(ball.x,ball.y,radius,0,2*Math.PI);
+	context.fill();
+}
+
+
+function getAColor(){
+	var color='#'+Math.floor(Math.random()*16).toString(16)+Math.floor(Math.random()*16).toString(16)+Math.floor(Math.random()*16).toString(16);
+	color+=Math.floor(Math.random()*16).toString(16)+Math.floor(Math.random()*16).toString(16)+Math.floor(Math.random()*16).toString(16);
+	//console.log('\"'+color+'\"');
+	return  color;
+}
+</script>
+</html>
